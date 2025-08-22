@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Apply to Job</title>
+</head>
+<body>
+<h1>Apply to Job</h1>
+<form th:action="@{/applications/apply}" th:object="${application}" method="post">
+  <input type="hidden" th:field="*{jobId}" th:value="${jobId}"/>
+  <label>Cover Letter: <textarea th:field="*{coverLetter}"></textarea></label><br/>
+  <button type="submit">Apply</button>
+</form>
+</body>
+</html>
