@@ -33,6 +33,7 @@ spring.thymeleaf.encoding=UTF-8
 
 spring.thymeleaf.enabled=true
 
-#
+#login 
 logging.level.org.springframework.security=DEBUG
+
 logging.level.com.jobportal.job=DEBUG
