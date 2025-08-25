@@ -14,6 +14,6 @@ public class JobDto {
     private double salary;
     @NotBlank
     private String location;
-
-
+    @NotBlank
+    private String company;
 }

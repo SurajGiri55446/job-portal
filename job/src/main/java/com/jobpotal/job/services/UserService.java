@@ -6,6 +6,8 @@ import com.jobpotal.job.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -33,5 +35,9 @@ public class UserService {
 
     public User userEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public List<User> getUserName(String name){
+        return userRepository.getUserByFullname(name);
     }
 }

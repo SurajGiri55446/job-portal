@@ -3,6 +3,8 @@ package com.jobpotal.job.Controller;
 
 import com.jobpotal.job.Repositories.UserRepository;
 
+import com.jobpotal.job.entity.User;
+import com.jobpotal.job.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
     private static final String ROLE_EMPLOYER = "ROLE_EMPLOYER";
     private static final String ROLE_APPLICANT = "ROLE_APPLICANT";
@@ -22,19 +26,28 @@ public class HomeController {
         if (authentication != null && authentication.isAuthenticated()) {
             return "redirect:/dashboard";
         }
-        return "index";
+        return "login";
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model, Authentication authentication) {
+    public String dashboard(Model model, Authentication authentication ) {
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
+        // In your dashboard method
+//        String email = authentication.getName();
+//        User user = (User) userService.getUserName(email);
+//        String fullName = user.getFullname();
+//        model.addAttribute("fullname", fullName);
 
-        // Get logged-in user email
+
+
+
         String email = authentication.getName();
-        model.addAttribute("userEmail", email);
+        String username = email.substring(0, email.indexOf("@"));
+        model.addAttribute("userEmail", username);
+
 
         // Check roles
         boolean isEmployer = authentication.getAuthorities().stream()
@@ -47,5 +60,11 @@ public class HomeController {
 
         return "dashboard";
     }
+
+      public String userName(String name,Model model){
+
+        model.addAttribute("userName",userService.getUserName(name));
+       return "Navheader";
+      }
 
 }

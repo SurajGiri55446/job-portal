@@ -42,6 +42,10 @@
   </style>
 </head>
 <body>
+
+
+<!--     ok working check apply link-->
+
 <div th:replace="Navheader :: Navbar"></div>
 
 <div class="container mt-4 mb-5">
@@ -99,10 +103,15 @@
   <div class="row">
     <div th:each="job : ${jobs}" class="col-lg-6">
       <div class="card job-card h-100">
+        <h5 class="card-title">
+          <i class="fas fa-building"></i>
+          <span th:text="${job.company}">Company Name</span>
+        </h5>
+
         <div class="card-body">
           <div class="d-flex justify-content-between">
             <h5 class="card-title" th:text="${job.title}">Job Title</h5>
-            <span class="salary-highlight" th:text="'₹' + ${job.salary}">$0</span>
+            <span class="salary-highlight" th:text="'₹' + ${job.salary}">Rs.0</span>
           </div>
           <h6 class="card-subtitle mb-2 text-muted"><i class="bi bi-geo-alt me-1"></i><span th:text="${job.location}">Location</span></h6>
           <p class="card-text" th:text="${job.description}">Job description goes here. This should be a brief summary of the job requirements and responsibilities.</p>
@@ -111,9 +120,12 @@
 
 <!--        //apply karna hai-->
 
-        <div class="card-footer bg-white border-0 pt-0">
-          <a th:href="@{/applications/apply/{id}(id=${job.id})}" class="btn btn-success w-100"><i class="bi bi-send me-2"></i>Apply Now</a>
-        </div>
+        <a th:if="${job != null and job.id != null}"
+           th:href="@{/applications/apply/{id}(id=${job.id})}"
+           class="btn btn-success w-100">
+          <i class="bi bi-send me-2"></i>Apply Now
+        </a>
+
       </div>
     </div>
   </div>

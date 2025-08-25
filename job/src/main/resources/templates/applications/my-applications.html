@@ -3,20 +3,93 @@
 <head>
   <title>My Applications</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #e6f0fa;
+    }
+    .status-badge { font-size: 0.9rem; padding: 0.4em 0.6em; }
+    .status-applied { background-color: #e3f2fd; color: #0d6efd; }
+    .status-review { background-color: #e8f5e9; color: #2e7d32; }
+    .status-shortlisted { background-color: #fff8e1; color: #f57f17; }
+    .status-rejected { background-color: #ffebee; color: #d32f2f; }
+    .cover-letter { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table thead th { background-color: #26a69a; color: white; text-align: center; }
+    .table td, .table th { vertical-align: middle; }
+    .table-hover tbody tr:hover { background-color: #f1f1f1; }
+    .card { border: none; border-radius: 8px; }
+    .card-body { padding: 2rem; }
+  </style>
 </head>
 <body>
-<div th:replace="Navheader :: Navbar"></div>
-<h1>My Applications</h1>
-<table>
 
-  <tr><th>Job Title</th><th>Status</th><th>Cover Letter</th></tr>
-  <tr th:each="app : ${applications}">
-    <td th:text="${app.job.title}"></td>
-    <td th:text="${app.status}"></td>
-    <td th:text="${app.coverLetter}"></td>
-  </tr>
-</table>
-<a href="/dashboard">Back to Dashboard</a>
+<div th:replace="Navheader :: Navbar"></div>
+
+<div class="container my-5">
+  <h2 class="mb-4 text-center text-primary fw-bold">My Job Applications</h2>
+
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+          <thead>
+          <tr>
+            <th scope="col"><i class="bi bi-briefcase me-2"></i>Job Title</th>
+            <th scope="col"><i class="bi bi-building"></i> Company</th>
+            <th scope="col"><i class="bi bi-flag me-2"></i>Status</th>
+            <th scope="col"><i class="bi bi-file-earmark-text me-2"></i>Cover Letter</th>
+            <th scope="col"><i class="bi bi-file-earmark-person me-2"></i>Resume</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="app : ${applications}">
+            <td th:text="${app.job.title}" class="fw-semibold text-start ps-4"></td>
+            <td th:text="${app.job.company}" class="fw-semibold text-start ps-4"></td>
+            <td>
+              <span th:switch="${app.status}">
+                <span th:case="'APPLIED'" class="badge status-badge status-applied">
+                  <i class="bi bi-hourglass me-1"></i>Applied
+                </span>
+                <span th:case="'UNDER_REVIEW'" class="badge status-badge status-review">
+                  <i class="bi bi-check2-all me-1"></i>Under Review
+                </span>
+                <span th:case="'SHORTLISTED'" class="badge status-badge status-shortlisted">
+                  <i class="bi bi-star me-1"></i>Shortlisted
+                </span>
+                <span th:case="'REJECTED'" class="badge status-badge status-rejected">
+                  <i class="bi bi-x-circle me-1"></i>Rejected
+                </span>
+                <span th:case="*" th:text="${app.status}"></span>
+              </span>
+            </td>
+            <td>
+              <span class="cover-letter" th:text="${app.coverLetter}"
+                    th:title="${app.coverLetter}"></span>
+            </td>
+            <td>
+              <a th:if="${app.resumePath != null}"
+                 th:href="@{'/applications/resume/' + ${app.id}}"
+                 class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-download me-1"></i>Download
+              </a>
+              <span th:if="${app.resumePath == null}" class="text-muted">No Resume</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    tooltipTriggerList.map(function (el) {
+      return new bootstrap.Tooltip(el);
+    });
+  });
+</script>
 </body>
 </html>

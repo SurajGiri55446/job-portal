@@ -27,10 +27,12 @@ public class Job {
     private LocalTime time=LocalTime.now();
     @PositiveOrZero
     private double salary;
-    @NotBlank
+    @Column(length = 255)
     private String location;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @NotBlank
+    private String company;
 }

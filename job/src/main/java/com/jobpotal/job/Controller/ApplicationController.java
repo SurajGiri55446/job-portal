@@ -8,11 +8,16 @@ import com.jobpotal.job.entity.User;
 import com.jobpotal.job.services.ApplicationService;
 import com.jobpotal.job.services.JobService;
 import com.jobpotal.job.services.UserService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -35,25 +40,27 @@ public class ApplicationController {
     @GetMapping("/apply/{id}")
     @PreAuthorize("hasRole('APPLICANT')")
     public String showApplyForm(@PathVariable Long id, Model model) {
-        model.addAttribute("application", new ApplicationDto());
-        model.addAttribute("jobId", id);
+        ApplicationDto applicationDto = new ApplicationDto();
+        applicationDto.setJobId(id);
+        model.addAttribute("application", applicationDto);
         return "applications/apply";
     }
 
     @PostMapping("/apply")
     @PreAuthorize("hasRole('APPLICANT')")
-    public String apply(@ModelAttribute("application") ApplicationDto applicationDto,
-                        Authentication authentication) {
+    public String apply(@ModelAttribute("application") ApplicationDto dto, Authentication authentication,
+                        @RequestParam("resumeFile") MultipartFile resumeFile) {
         String email = authentication.getName();
         User user = userService.userEmail(email);
-        applicationService.applyJob(applicationDto, user);
+        applicationService.applyJob(dto, user,resumeFile);
         return "redirect:/applications/my-applications";
     }
 
     @GetMapping("/my-applications")
     @PreAuthorize("hasRole('APPLICANT')")
-    public String myApplication(Model model, Authentication authentication) {
+    public String myApplications(Model model, Authentication authentication) {
         String email = authentication.getName();
+
         User user = userService.userEmail(email);
         List<Application> applications = applicationService.getApplicationByUser(user);
         model.addAttribute("applications", applications);
@@ -78,4 +85,17 @@ public class ApplicationController {
         applicationService.updateStatus(appId, status);
         return "redirect:/applications/job/" + jobId;
     }
+
+    @GetMapping("/download-resume/{appId}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public ResponseEntity<Resource> downloadResume(@PathVariable Long appId) {
+        Resource resource = (Resource) applicationService.downloadResume(appId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+
 }

@@ -1,12 +1,26 @@
 package com.jobpotal.job.DTO;
 
+
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class ApplicationDto {
 
-    private Long id;
-    private String  converLetter;
 
 
+    private Long jobId;
+    @NotBlank(message = "cover letter is required")
+
+    private String coverLetter;
+
+    private String resumePath;
+
+    @Override
+    public String toString() {
+        return "ApplicationDto{" +
+                "jobId=" + jobId +
+                ", coverLetter='" + coverLetter + '\'' +
+                '}';
+    }
 }

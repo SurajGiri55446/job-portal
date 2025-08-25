@@ -33,7 +33,7 @@ public class JobController {
                            @RequestParam(name = "minSalary", required = false) Double minSalary,
                            Model model) {
 
-        List<Job> jobs = jobService.searchJob(title, location, minSalary);
+        List<Job> jobs = jobService.searchJob(title,location,minSalary);
 
         if (jobs == null) {
             jobs = new ArrayList<>();
@@ -43,29 +43,29 @@ public class JobController {
         return "jobs/list";
     }
 
-
-
     @GetMapping("/post")
     @PreAuthorize("hasRole('EMPLOYER')")
     public String showPostForm(Model model) {
         model.addAttribute("job", new JobDto());
+        model.addAttribute("formAction", "/jobs/post");
+        model.addAttribute("formType", "create");
         return "jobs/post";
-
     }
 
     @PostMapping("/post")
     @PreAuthorize("hasRole('EMPLOYER')")
     public String postJob(@Valid @ModelAttribute("job") JobDto jobDto, BindingResult result,
-                          Authentication authentication){
+                          Authentication authentication, Model model){
         if(result.hasErrors()){
+            model.addAttribute("formAction", "/jobs/post");
+            model.addAttribute("formType", "create");
             return "jobs/post";
         }
-        String email=authentication.getName();
-        User user =userService.userEmail(email);
+        String email = authentication.getName();
+        User user = userService.userEmail(email);
         jobService.postJob(user, jobDto);
         return "redirect:/jobs/my-jobs";
     }
-
 
     @GetMapping("/my-jobs")
     @PreAuthorize("hasRole('EMPLOYER')")
@@ -75,6 +75,34 @@ public class JobController {
         List<Job> jobs = jobService.getUserByEmployer(user);
         model.addAttribute("jobs", jobs);
         return "jobs/my-jobs";
+    }
 
+    @PostMapping("/delete/{id}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public String deleteJob(@PathVariable Long id) {
+        jobService.deleteJobById(id);
+        return "redirect:/jobs/my-jobs";
+    }
+
+    @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Job jobDto = jobService.findById(id);
+        model.addAttribute("job", jobDto);
+        model.addAttribute("formAction", "/jobs/update/" + id);
+        model.addAttribute("formType", "edit");
+        return "jobs/post";
+    }
+
+    @PostMapping("/update/{id}")
+    @PreAuthorize("hasRole('EMPLOYER')")
+    public String updateJob(@PathVariable Long id, @Valid @ModelAttribute("job") JobDto jobDto, BindingResult result, Model model) {
+        if(result.hasErrors()){
+            model.addAttribute("formAction", "/jobs/update/" + id);
+            model.addAttribute("formType", "edit");
+            return "jobs/post";
+        }
+        jobService.updateJob(id, jobDto);
+        return "redirect:/jobs/my-jobs";
     }
 }

@@ -288,7 +288,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" th:href="@{/applications/my-applications}">
 
               <i class="bi bi-send"></i>Apply Jobs
             </a>
@@ -312,7 +312,7 @@
   <div class="welcome-header">
     <div class="row align-items-center">
       <div class="col-md-8">
-        <h1 class="display-5 fw-bold">Welcome back, <span th:text="${userEmail}">User</span>! 👋</h1>
+        <h1 class="display-5 fw-bold">Welcome back, ,<br><span th:text="${userEmail}">User</span>! 👋</h1>
         <p class="lead mb-0">Here's what's happening with your job search today.</p>
       </div>
       <div class="col-md-4 text-md-end">
