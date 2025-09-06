@@ -16,11 +16,4 @@ public class ApplicationDto {
 
     private String resumePath;
 
-    @Override
-    public String toString() {
-        return "ApplicationDto{" +
-                "jobId=" + jobId +
-                ", coverLetter='" + coverLetter + '\'' +
-                '}';
-    }
 }

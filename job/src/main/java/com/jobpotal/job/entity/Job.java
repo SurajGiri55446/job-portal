@@ -1,18 +1,18 @@
 package com.jobpotal.job.entity;
 
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
-@NoArgsConstructor @Data @AllArgsConstructor
-@Entity @Table(name = "job")
+@Data
+@NoArgsConstructor  @AllArgsConstructor
+@Entity
+@Table(name = "job")
 public class Job {
 
     @Id
@@ -21,12 +21,16 @@ public class Job {
     @NotBlank(message = "Enter title")
     private String title;
     @NotBlank
-    @Column(length = 3000)
+    @Column(length = 4000)
     private String description;
 
-    private LocalTime time=LocalTime.now();
+    @Column(name = "posted_date")
+    private LocalDateTime postedDate;
+
+
     @PositiveOrZero
     private double salary;
+
     @Column(length = 255)
     private String location;
 
@@ -35,4 +39,10 @@ public class Job {
     private User user;
     @NotBlank
     private String company;
+
+    @PrePersist
+    public void prePersist() {
+        this.postedDate = LocalDateTime.now();
+    }
+
 }

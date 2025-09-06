@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime; // Changed from LocalTime to LocalDateTime
 import java.time.LocalTime;
 
 @Data
@@ -28,7 +27,7 @@ public class Application {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime applicationTime = LocalDateTime.now();
+    private LocalTime appliedTime=LocalTime.now();
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status = ApplicationStatus.APPLIED;

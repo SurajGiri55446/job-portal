@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/navbar.js}" defer></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f8fafc;
+            --accent: #f59e0b;
+            --text: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: #f9fafb;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 0 0 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            z-index: 1;
+            background: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+            transform: rotate(30deg);
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 2;
+            position: relative;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .info-card-body {
+            padding: 1.5rem;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            stroke-dasharray: 251.2;
+            transition: stroke-dashoffset 0.5s ease;
+            stroke: var(--primary);
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-light);
+            font-weight: 500;
+            margin: 2rem 0;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-divider::before {
+            margin-right: 1rem;
+        }
+
+        .section-divider::after {
+            margin-left: 1rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background-color: #eef2ff;
+            color: var(--primary);
+        }
+
+        .badge-accent {
+            background-color: #fffbeb;
+            color: var(--accent);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: white;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #f9fafb;
+        }
+
+        .empty-state {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 1rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        .portfolio-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: #f1f5f9;
+            color: var(--text);
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .portfolio-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1.5rem;
+            bottom: -2rem;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        /* Skills specific styles */
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(to right, #eef2ff, #f0f9ff);
+            border: 1px solid #e0e7ff;
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.15);
+        }
+
+        .skill-category {
+            font-weight: 600;
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .skill-category:first-child {
+            margin-top: 0;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Navigation -->
+<div th:replace="Navheader :: Navbar"></div>
+
+<!-- Header -->
+<div class="profile-header py-16 relative">
+    <div class="container mx-auto px-4 text-center relative z-10">
+        <h1 class="text-3xl font-bold text-white mb-2" th:text="${user.fullname}"></h1>
+        <p class="text-blue-100">Member since <span th:text="${#temporals.format(user.joinDate, 'MMMM yyyy')}"></span></p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8 -mt-12 relative z-20">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Profile Summary -->
+            <div class="glass-card rounded-2xl p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-2" th:text="${user.fullname}"></h2>
+                    <p class="text-gray-600 mb-4" th:text="${user.bio != null ? user.bio : 'No bio provided yet'}"></p>
+                    <div class="badge badge-primary">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Active Member</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Profile Completion</span>
+                        <span class="text-sm font-semibold text-primary">85%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <a href="/profile/edit" class="btn btn-primary w-full">
+                        <i class="fas fa-edit"></i>Edit Profile
+                    </a>
+                    <a href="/dashboard" class="btn btn-outline w-full">
+                        <i class="fas fa-arrow-left"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Skills Summary -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-tools text-primary"></i>
+                    <span>Skills Summary</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.skills != null and not #lists.isEmpty(user.skills)}">
+                        <div class="text-center mb-4">
+                            <span class="text-2xl font-bold text-primary" th:text="${#lists.size(user.skills)}"></span>
+                            <span class="text-gray-600">skills added</span>
+                        </div>
+                        <div class="skills-container">
+                            <th:block th:each="skill, iter : ${user.skills}">
+                                <th:block th:if="${iter.index < 6}"> <!-- Show only first 6 skills in summary -->
+                                    <div class="skill-tag">
+                                        <span th:text="${skill}"></span>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${#lists.size(user.skills) > 6}">
+                                <div class="skill-tag bg-gray-100 text-gray-600">
+                                    +<span th:text="${#lists.size(user.skills) - 6}"></span> more
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div th:if="${user.skills == null or #lists.isEmpty(user.skills)}" class="text-center py-4">
+                        <i class="fas fa-tools text-3xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-500 mb-3">No skills added yet</p>
+                        <a href="/profile/edit" class="text-primary hover:underline">Add skills now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-address-card text-primary"></i>
+                    <span>Contact Information</span>
+                </div>
+                <div class="info-card-body space-y-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Email</p>
+                            <p class="font-medium" th:text="${user.email}"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-3">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Phone</p>
+                            <p class="font-medium" th:text="${user.phone != null ? user.phone : 'Not provided'}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-file-alt text-primary"></i>
+                    <span>Resume</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.resumePath != null}" class="text-center">
+                        <a th:href="@{/profile/download-resume-profile/{id}(id=${user.id})}"
+                           class="btn btn-primary w-full">
+                            <i class="fas fa-download"></i>Download Resume
+                        </a>
+                    </div>
+                    <div th:if="${user.resumePath == null}" class="text-center py-4">
+                        <p class="text-gray-500 mb-3">No resume uploaded</p>
+                        <a href="/profile/edit" class="text-primary hover:underline">Upload now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Skills Section -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-tools text-primary"></i>
+                    <span>Skills & Expertise</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.skills != null and not #lists.isEmpty(user.skills)}">
+                        <div class="skills-container">
+                            <th:block th:each="skill : ${user.skills}">
+                                <div class="skill-tag">
+                                    <i class="fas fa-check-circle mr-1 text-green-500"></i>
+                                    <span th:text="${skill}"></span>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div th:if="${user.skills == null or #lists.isEmpty(user.skills)}" class="empty-state">
+                        <i class="fas fa-tools"></i>
+                        <p class="font-medium mb-1">No skills added yet</p>
+                        <p class="text-sm">Add your skills to showcase your expertise to employers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education Section -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-graduation-cap text-primary"></i>
+                    <span>Education</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.educations != null and not #lists.isEmpty(user.educations)}">
+                        <div class="timeline">
+                            <div th:each="edu : ${user.educations}" class="timeline-item">
+                                <h3 class="font-semibold text-lg text-gray-800" th:text="${edu.degree}"></h3>
+                                <p class="text-gray-600 mb-1" th:text="${edu.institution}"></p>
+                                <p class="text-sm text-gray-500" th:text="${edu.year}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${user.educations == null or #lists.isEmpty(user.educations)}" class="empty-state">
+                        <i class="fas fa-graduation-cap"></i>
+                        <p class="font-medium mb-1">No education details available</p>
+                        <p class="text-sm">Add your education history to improve your profile</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Experience Section -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-briefcase text-primary"></i>
+                    <span>Work Experience</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.workExperiences != null and not #lists.isEmpty(user.workExperiences)}">
+                        <div class="timeline">
+                            <div th:each="exp : ${user.workExperiences}" class="timeline-item">
+                                <h3 class="font-semibold text-lg text-gray-800" th:text="${exp.jobTitle}"></h3>
+                                <p class="text-gray-600 mb-1" th:text="${exp.company}"></p>
+                                <p class="text-sm text-gray-500" th:text="${exp.duration}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${user.workExperiences == null or #lists.isEmpty(user.workExperiences)}" class="empty-state">
+                        <i class="fas fa-briefcase"></i>
+                        <p class="font-medium mb-1">No work experience added</p>
+                        <p class="text-sm">Add your work experience to showcase your career journey</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Section -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="fas fa-link text-primary"></i>
+                    <span>Portfolio</span>
+                </div>
+                <div class="info-card-body">
+                    <div th:if="${user.portfolioLinks != null and not #lists.isEmpty(user.portfolioLinks)}" class="flex flex-wrap">
+                        <a th:each="link : ${user.portfolioLinks}" th:href="${link}"
+                           class="portfolio-link" target="_blank">
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                            <span th:text="${link}"></span>
+                        </a>
+                    </div>
+                    <div th:if="${user.portfolioLinks == null or #lists.isEmpty(user.portfolioLinks)}" class="empty-state">
+                        <i class="fas fa-link"></i>
+                        <p class="font-medium mb-1">No portfolio links added</p>
+                        <p class="text-sm">Add links to your projects or portfolio websites</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="flex justify-center mt-6">
+                <a href="/profile/edit" class="btn btn-primary">
+                    <i class="fas fa-edit mr-2"></i>Complete Your Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

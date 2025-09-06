@@ -21,4 +21,13 @@ public class UserDto {
     private String password;
     @NotNull
     private Role role;
+
+    private String phone;
+
+    private String bio;
+
+    private String resumePath;
+
+    private String profilePicturePath;
+
 }

@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class JobController {
     public String listJobs(@RequestParam(required = false) String title,
                            @RequestParam(required = false) String location,
                            @RequestParam(name = "minSalary", required = false) Double minSalary,
-                           Model model) {
+                           Model model
+                          ) {
 
         List<Job> jobs = jobService.searchJob(title,location,minSalary);
 
@@ -105,4 +107,6 @@ public class JobController {
         jobService.updateJob(id, jobDto);
         return "redirect:/jobs/my-jobs";
     }
+
+
 }

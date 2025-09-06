@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Profile</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/navbar.js}" defer></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input {
+            @apply border-gray-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition duration-200;
+        }
+
+        .add-btn, .action-btn {
+            transition: all 0.2s ease;
+        }
+
+        .section-card {
+            @apply bg-white rounded-xl p-6 shadow-sm border border-gray-100;
+        }
+
+        .section-title {
+            @apply text-xl font-semibold text-gray-800 mb-4 flex items-center;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+        }
+
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border-radius: 0.375rem;
+            padding: 0.35rem 0.75rem;
+            margin: 0.25rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .skill-tag-remove {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .skill-tag-remove:hover {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Navbar -->
+<div th:replace="Navheader :: Navbar"></div>
+
+<!-- Header -->
+<div class="gradient-bg py-16 text-center text-white rounded-b-3xl shadow-lg">
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold mb-3">Edit Your Profile</h1>
+        <p class="text-lg text-blue-100 opacity-90">Update your personal information and preferences</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8 -mt-10">
+    <div class="flex justify-center">
+        <div class="w-full lg:w-11/12 bg-white shadow-xl rounded-2xl overflow-hidden p-0">
+            <div class="grid md:grid-cols-4 gap-0">
+                <!-- Sidebar Navigation -->
+                <div class="md:col-span-1 bg-gray-50 p-6 border-r border-gray-200">
+                    <div class="sticky top-24">
+                        <h3 class="font-medium text-gray-500 text-sm uppercase mb-4">Profile Settings</h3>
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="#personal-info" class="flex items-center px-3 py-2 rounded-lg text-purple-700 bg-purple-50 font-medium">
+                                    <i class="fas fa-user-circle mr-3"></i> Personal Info
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#skills" class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-purple-700 hover:bg-purple-50">
+                                    <i class="fas fa-tools mr-3"></i> Skills
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#education" class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-purple-700 hover:bg-purple-50">
+                                    <i class="fas fa-graduation-cap mr-3"></i> Education
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#experience" class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-purple-700 hover:bg-purple-50">
+                                    <i class="fas fa-briefcase mr-3"></i> Experience
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#portfolio" class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-purple-700 hover:bg-purple-50">
+                                    <i class="fas fa-link mr-3"></i> Portfolio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#preferences" class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-purple-700 hover:bg-purple-50">
+                                    <i class="fas fa-cog mr-3"></i> Preferences
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <div class="flex items-center">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900" th:text="${user.fullname}">User Name</p>
+                                    <p class="text-xs text-gray-500" th:text="${user.email}">user@example.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <div class="md:col-span-3 p-8">
+                    <form th:action="@{/profile/edit}" method="post" enctype="multipart/form-data" th:object="${user}">
+
+                        <!-- Personal Info -->
+                        <div id="personal-info" class="section-card mb-8">
+                            <h2 class="section-title">
+                                <i class="fas fa-user-check mr-2 text-purple-500"></i>Personal Information
+                            </h2>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="fullname" class="block font-medium text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" id="fullname" th:field="*{fullname}" placeholder="Enter your full name" required
+                                           class="form-input w-full rounded-lg py-3 px-4 border" />
+                                </div>
+                                <div>
+                                    <label for="email" class="block font-medium text-gray-700 mb-2">Email</label>
+                                    <input type="email" id="email" th:field="*{email}" readonly
+                                           class="form-input w-full rounded-lg py-3 px-4 border bg-gray-50 cursor-not-allowed" />
+                                    <small class="text-gray-500 mt-1 block text-sm">Email cannot be changed</small>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="phone" class="block font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" id="phone" th:field="*{phone}" placeholder="Enter your phone number"
+                                           class="form-input w-full rounded-lg py-3 px-4 border" />
+                                </div>
+                                <div>
+                                    <label for="resume" class="block font-medium text-gray-700 mb-2">Upload Resume</label>
+                                    <div class="flex items-center">
+                                        <label for="resume" class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg border border-gray-300 flex items-center transition">
+                                            <i class="fas fa-upload mr-2"></i> Choose file
+                                        </label>
+                                        <span class="ml-3 text-sm text-gray-500" id="resume-file-name">No file chosen</span>
+                                    </div>
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" class="hidden"
+                                           onchange="document.getElementById('resume-file-name').textContent = this.files[0]?.name || 'No file chosen'" />
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label for="bio" class="block font-medium text-gray-700 mb-2">Bio</label>
+                                <textarea id="bio" th:field="*{bio}" rows="4" placeholder="Tell us a little about yourself"
+                                          class="form-input w-full rounded-lg py-3 px-4 border"></textarea>
+                                <div class="flex justify-between mt-1">
+                                    <small class="text-gray-500 text-sm">Maximum 500 characters</small>
+                                    <small class="text-gray-500 text-sm"><span id="bio-chars">0</span>/500</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div id="skills" class="section-card mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="section-title">
+                                    <i class="fas fa-tools mr-2 text-purple-500"></i>Skills
+                                </h2>
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-3" id="skills-count">0 skills</span>
+                                    <button type="button" class="add-btn bg-purple-50 text-purple-700 hover:bg-purple-100 px-4 py-2 rounded-lg text-sm font-medium" onclick="addSkill()">
+                                        <i class="fas fa-plus mr-1"></i> Add Skill
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="flex items-center">
+                                    <input type="text" id="new-skill-input" placeholder="Type a skill and press Enter"
+                                           class="form-input flex-1 rounded-lg py-2.5 px-4 border"
+                                           onkeypress="if(event.key === 'Enter') {event.preventDefault(); addSkill();}" />
+                                    <button type="button" onclick="addSkill()" class="ml-2 bg-purple-600 text-white px-4 py-2.5 rounded-lg hover:bg-purple-700 transition">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <small class="text-gray-500 mt-1 block">Type your skill and press Enter or click the + button</small>
+                            </div>
+
+                            <div id="skills-container" class="flex flex-wrap mb-4 p-3 bg-gray-50 rounded-lg min-h-[3rem]">
+                                <!-- Skills will be added here dynamically -->
+                                <th:block th:each="skill, iterStat : *{skills}">
+                                    <div class="skill-tag">
+                                        <span th:text="${skill}">Skill</span>
+                                        <input type="hidden" th:name="skills" th:value="${skill}" />
+                                        <span class="skill-tag-remove" onclick="removeSkill(this)">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                    </div>
+                                </th:block>
+                            </div>
+
+                            <div class="text-sm text-gray-500">
+                                <p>💡 Add relevant skills to help employers find you. Include technical skills, languages, tools, and soft skills.</p>
+                            </div>
+                        </div>
+
+                        <!-- Education -->
+                        <div id="education" class="section-card mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="section-title">
+                                    <i class="fas fa-graduation-cap mr-2 text-purple-500"></i>Education
+                                </h2>
+                                <button type="button" class="add-btn bg-purple-50 text-purple-700 hover:bg-purple-100 px-4 py-2 rounded-lg text-sm font-medium" onclick="addEducationField()">
+                                    <i class="fas fa-plus mr-1"></i> Add Education
+                                </button>
+                            </div>
+
+                            <div id="educationFields" class="space-y-4">
+                                <div class="grid md:grid-cols-3 gap-4" th:each="edu, iterStat : *{educations}">
+                                    <input type="text" th:field="*{educations[__${iterStat.index}__].degree}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Degree" />
+                                    <input type="text" th:field="*{educations[__${iterStat.index}__].institution}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Institution" />
+                                    <input type="text" th:field="*{educations[__${iterStat.index}__].year}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Year (e.g., 2018-2022)" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div id="experience" class="section-card mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="section-title">
+                                    <i class="fas fa-briefcase mr-2 text-purple-500"></i>Work Experience
+                                </h2>
+                                <button type="button" class="add-btn bg-purple-50 text-purple-700 hover:bg-purple-100 px-4 py-2 rounded-lg text-sm font-medium" onclick="addWorkExperienceField()">
+                                    <i class="fas fa-plus mr-1"></i> Add Experience
+                                </button>
+                            </div>
+
+                            <div id="workExperienceFields" class="space-y-4">
+                                <div class="grid md:grid-cols-3 gap-4" th:each="work, iterStat : *{workExperiences}">
+                                    <input type="text" th:field="*{workExperiences[__${iterStat.index}__].jobTitle}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Job Title" />
+                                    <input type="text" th:field="*{workExperiences[__${iterStat.index}__].company}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Company" />
+                                    <input type="text" th:field="*{workExperiences[__${iterStat.index}__].duration}" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Duration (e.g., Jan 2020 - Present)" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio Links -->
+                        <div id="portfolio" class="section-card mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="section-title">
+                                    <i class="fas fa-link mr-2 text-purple-500"></i>Portfolio Links
+                                </h2>
+                                <button type="button" onclick="addPortfolioField()" class="add-btn bg-purple-50 text-purple-700 hover:bg-purple-100 px-4 py-2 rounded-lg text-sm font-medium">
+                                    <i class="fas fa-plus mr-1"></i> Add Link
+                                </button>
+                            </div>
+
+                            <div id="portfolioFields" class="space-y-3">
+                                <div th:each="link, iterStat : *{portfolioLinks}">
+                                    <div class="flex items-center gap-2">
+                                        <input type="url" th:field="*{portfolioLinks[__${iterStat.index}__]}" class="form-input w-full rounded-lg py-2.5 px-4 border" placeholder="https://your-portfolio.com" />
+                                        <button type="button" class="remove-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition" onclick="this.parentElement.remove()">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div id="preferences" class="section-card mb-8">
+                            <h2 class="section-title">
+                                <i class="fas fa-cog mr-2 text-purple-500"></i>Preferences
+                            </h2>
+
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" th:field="*{profilePublic}" id="isProfilePublic" class="h-4 w-4 text-purple-600 border-gray-300 rounded" />
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="isProfilePublic" class="font-medium text-gray-700">Make my profile public to employers</label>
+                                        <p class="text-gray-500 mt-1">When enabled, your profile will be visible to employers searching for candidates</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" th:field="*{notifyJobRecommendations}" id="notifyJobRecommendations" class="h-4 w-4 text-purple-600 border-gray-300 rounded" />
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="notifyJobRecommendations" class="font-medium text-gray-700">Job Recommendations</label>
+                                        <p class="text-gray-500 mt-1">Receive emails with job recommendations based on your profile</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" th:field="*{notifyApplicationUpdates}" id="notifyApplicationUpdates" class="h-4 w-4 text-purple-600 border-gray-300 rounded" />
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="notifyApplicationUpdates" class="font-medium text-gray-700">Application Updates</label>
+                                        <p class="text-gray-500 mt-1">Get notified when there are updates to your job applications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col md:flex-row justify-between gap-4 mt-8 pt-6 border-t border-gray-200">
+                            <a href="/profile" class="action-btn border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg text-center font-medium">
+                                Cancel
+                            </a>
+                            <button type="submit" class="action-btn bg-gradient-to-r from-purple-600 to-blue-500 text-white hover:opacity-90 px-8 py-3 rounded-lg shadow-md hover:shadow-lg font-medium">
+                                <i class="fas fa-save mr-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    let portfolioIndex = /*[[${user.portfolioLinks != null} ? ${#lists.size(user.portfolioLinks)} : 1]]*/ 1;
+    let educationIndex = /*[[${user.educations != null} ? ${#lists.size(user.educations)} : 1]]*/ 1;
+    let workExperienceIndex = /*[[${user.workExperiences != null} ? ${#lists.size(user.workExperiences)} : 1]]*/ 1;
+    let skillsIndex = /*[[${user.skills != null} ? ${#lists.size(user.skills)} : 0]]*/ 0;
+
+    // Character counter for bio
+    const bioTextarea = document.getElementById('bio');
+    const bioChars = document.getElementById('bio-chars');
+
+    if (bioTextarea && bioChars) {
+        bioTextarea.addEventListener('input', function() {
+            bioChars.textContent = this.value.length;
+        });
+        // Initialize with current value length
+        bioChars.textContent = bioTextarea.value.length;
+    }
+
+    // Skills functionality
+    function addSkill() {
+        const skillInput = document.getElementById('new-skill-input');
+        const skillText = skillInput.value.trim();
+
+        if (skillText === '') return;
+
+        const skillsContainer = document.getElementById('skills-container');
+
+        // Create skill tag
+        const skillTag = document.createElement('div');
+        skillTag.className = 'skill-tag';
+        skillTag.innerHTML = `
+            <span>${skillText}</span>
+            <input type="hidden" name="skills" value="${skillText}" />
+            <span class="skill-tag-remove" onclick="removeSkill(this)">
+                <i class="fas fa-times"></i>
+            </span>
+        `;
+
+        skillsContainer.appendChild(skillTag);
+        skillInput.value = '';
+
+        updateSkillsCount();
+    }
+
+    function removeSkill(element) {
+        element.closest('.skill-tag').remove();
+        updateSkillsCount();
+    }
+
+    function updateSkillsCount() {
+        const skillsCount = document.querySelectorAll('.skill-tag').length;
+        document.getElementById('skills-count').textContent = `${skillsCount} skill${skillsCount !== 1 ? 's' : ''}`;
+    }
+
+    // Initialize skills count on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSkillsCount();
+    });
+
+    function addPortfolioField() {
+        const container = document.getElementById('portfolioFields');
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 mb-2';
+        div.innerHTML = `
+            <input type="url" name="portfolioLinks[${portfolioIndex}]" class="form-input w-full rounded-lg py-2.5 px-4 border" placeholder="https://your-portfolio.com" />
+            <button type="button" class="remove-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition" onclick="this.parentElement.remove()">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        `;
+        container.appendChild(div);
+        portfolioIndex++;
+    }
+
+    function previewImage(input) {
+        const preview = document.getElementById('profile-preview');
+        const file = input.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+        }
+    }
+
+    function addEducationField() {
+        const container = document.getElementById('educationFields');
+        const field = document.createElement('div');
+        field.className = 'grid md:grid-cols-3 gap-4 mb-4';
+        field.innerHTML = `
+            <input type="text" name="educations[${educationIndex}].degree" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Degree" />
+            <input type="text" name="educations[${educationIndex}].institution" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Institution" />
+            <input type="text" name="educations[${educationIndex}].year" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Year" />
+        `;
+        container.appendChild(field);
+        educationIndex++;
+    }
+
+    function addWorkExperienceField() {
+        const container = document.getElementById('workExperienceFields');
+        const field = document.createElement('div');
+        field.className = 'grid md:grid-cols-3 gap-4 mb-4';
+        field.innerHTML = `
+            <input type="text" name="workExperiences[${workExperienceIndex}].jobTitle" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Job Title" />
+            <input type="text" name="workExperiences[${workExperienceIndex}].company" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Company" />
+            <input type="text" name="workExperiences[${workExperienceIndex}].duration" class="form-input rounded-lg w-full py-2.5 px-4 border" placeholder="Duration" />
+        `;
+        container.appendChild(field);
+        workExperienceIndex++;
+    }
+</script>
+
+</body>
+</html>

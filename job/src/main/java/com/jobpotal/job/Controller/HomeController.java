@@ -3,7 +3,7 @@ package com.jobpotal.job.Controller;
 
 import com.jobpotal.job.Repositories.UserRepository;
 
-import com.jobpotal.job.entity.User;
+
 import com.jobpotal.job.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -35,21 +35,14 @@ public class HomeController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/login";
         }
-        // In your dashboard method
-//        String email = authentication.getName();
-//        User user = (User) userService.getUserName(email);
-//        String fullName = user.getFullname();
-//        model.addAttribute("fullname", fullName);
-
-
 
 
         String email = authentication.getName();
         String username = email.substring(0, email.indexOf("@"));
-        model.addAttribute("userEmail", username);
+
+        model.addAttribute("userEmail", email);
 
 
-        // Check roles
         boolean isEmployer = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals(ROLE_EMPLOYER));
         boolean isApplicant = authentication.getAuthorities().stream()
@@ -61,10 +54,11 @@ public class HomeController {
         return "dashboard";
     }
 
-      public String userName(String name,Model model){
+    @GetMapping("/resume")
+    public String reume(){
+        return "resume";
+    }
 
-        model.addAttribute("userName",userService.getUserName(name));
-       return "Navheader";
-      }
+
 
 }

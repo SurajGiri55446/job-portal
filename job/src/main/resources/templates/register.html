@@ -1,85 +1,178 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <!-- Bootstrap 5 -->
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:src="@{/js/navbar.js}" defer></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="bg-gray-50">
 
-
-<!--        working-->
-
+<!-- Navigation -->
 <div th:replace="Navheader :: Navbar"></div>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow rounded-4">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-4">Register</h2>
+<!-- Main Content -->
+<main class="py-8 px-4">
+    <div class="max-w-md mx-auto">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden card">
+            <div class="p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900">Register</h2>
+                    <p class="mt-2 text-gray-600">Create your JobPortal account</p>
+                </div>
 
-<!--                  -->
-<!--                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">-->
-<!--                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>-->
-<!--                    </div>-->
+                <!-- Registration Form -->
+                <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-5">
 
-                    <!-- Registration Form -->
-                    <form th:action="@{/register}" th:object="${user}" method="post">
-
-                        <!-- Full Name -->
-                        <div class="mb-3">
-                            <label for="fullname" class="form-label">Full Name</label>
-                            <input type="text" id="fullname" th:field="*{fullname}" class="form-control" placeholder="Enter your full name">
-                            <div class="text-danger small" th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"></div>
+                    <!-- Full Name -->
+                    <div>
+                        <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="fullname" th:field="*{fullname}"
+                                   class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Enter your full name">
                         </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('fullname')}" th:errors="*{fullname}"></div>
+                    </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Enter your email">
-                            <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="email" th:field="*{email}"
+                                   class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Enter your email">
                         </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
 
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Enter your password">
-                            <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="password" th:field="*{password}"
+                                   class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Enter your password">
                         </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    </div>
 
-                        <!-- Role -->
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Role</label>
-                            <select id="role" th:field="*{role}" class="form-select">
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-phone text-gray-400"></i>
+                            </div>
+                            <input type="tel" id="phone" th:field="*{phone}"
+                                   class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500"
+                                   placeholder="Enter your phone number">
+                        </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                    </div>
+
+                    <!-- Bio -->
+                    <div>
+                        <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                        <div class="relative">
+                            <div class="absolute top-3 left-3 pointer-events-none">
+                                <i class="fas fa-info-circle text-gray-400"></i>
+                            </div>
+                            <textarea id="bio" th:field="*{bio}"
+                                      class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500"
+                                      rows="4" placeholder="Tell us about yourself"></textarea>
+                        </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
+                    </div>
+
+                    <!-- Role -->
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-briefcase text-gray-400"></i>
+                            </div>
+                            <select id="role" th:field="*{role}"
+                                    class="form-input py-3 pl-10 block w-full rounded-lg border-gray-300 border focus:ring-emerald-500 focus:border-emerald-500">
                                 <option value="">-- Select Role --</option>
                                 <option value="EMPLOYER">Employer</option>
                                 <option value="APPLICANT">Applicant</option>
                             </select>
-                            <div class="text-danger small" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
                         </div>
+                        <div class="text-red-500 text-xs mt-1" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                    </div>
 
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success btn-lg">Register</button>
-                        </div>
-                    </form>
+                    <!-- Submit Button -->
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="btn-register w-full py-3 px-4 rounded-lg text-white font-semibold text-lg">
+                            <i class="fas fa-user-plus mr-2"></i>Register
+                        </button>
+                    </div>
+                </form>
 
-                    <!-- Login Link -->
-                    <p class="text-center mt-3">
+                <!-- Login Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">
                         Already have an account?
-                        <a th:href="@{/login}" class="text-decoration-none">Login here</a>
+                        <a th:href="@{/login}" class="font-medium text-emerald-600 hover:text-emerald-500 transition-colors duration-200">
+                            Login here
+                        </a>
                     </p>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

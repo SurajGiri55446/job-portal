@@ -45,8 +45,5 @@ public class RegistrationController {
         }
     }
 
-    @GetMapping("/nav")
-    public String nav() {
-        return "Navheader";
-    }
+
 }

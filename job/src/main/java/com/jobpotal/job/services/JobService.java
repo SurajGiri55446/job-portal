@@ -20,12 +20,13 @@ public class JobService {
     @Autowired
     private  final JobRepository jobRepository;
 
-    @Autowired
-    private ApplicationRepository applicationRepository;
 
-    public JobService(UserRepository userRepository, JobRepository jobRepository) {
+    private final ApplicationRepository applicationRepository;
+
+    public JobService(UserRepository userRepository, JobRepository jobRepository, ApplicationRepository applicationRepository) {
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     public Job postJob(User user , JobDto jobDto){
@@ -39,9 +40,12 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public List<Job> searchJob(String title, String locations, Double salary) {
-        return jobRepository.searchJobs(title, locations, salary);
+    public List<Job> searchJob(String title, String location, Double salary) {
+        String t = (title == null || title.isBlank()) ? null : title.toLowerCase();
+        String loc = (location == null || location.isBlank()) ? null : location.toLowerCase();
+        return jobRepository.searchJobs(t, loc, salary);
     }
+
 
 
     public List<Job> getUserByEmployer(User user){
@@ -72,5 +76,10 @@ public class JobService {
         }
         return null;
     }
+
+
+
+
+
 
 }

@@ -1,78 +1,169 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Applications</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script th:src="@{/js/navbar.js}" defer></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
   <style>
-    body {
-      background-color: #e6f0fa;
+    .status-badge {
+      font-size: 0.875rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.375rem;
+      display: inline-flex;
+      align-items: center;
+      font-weight: 500;
     }
-    .status-badge { font-size: 0.9rem; padding: 0.4em 0.6em; }
-    .status-applied { background-color: #e3f2fd; color: #0d6efd; }
-    .status-review { background-color: #e8f5e9; color: #2e7d32; }
-    .status-shortlisted { background-color: #fff8e1; color: #f57f17; }
-    .status-rejected { background-color: #ffebee; color: #d32f2f; }
-    .cover-letter { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .table thead th { background-color: #26a69a; color: white; text-align: center; }
-    .table td, .table th { vertical-align: middle; }
-    .table-hover tbody tr:hover { background-color: #f1f1f1; }
-    .card { border: none; border-radius: 8px; }
-    .card-body { padding: 2rem; }
+    .status-applied { background-color: #dbeafe; color: #1e40af; }
+    .status-review { background-color: #dcfce7; color: #166534; }
+    .status-shortlisted { background-color: #fef3c7; color: #92400e; }
+    .status-rejected { background-color: #fee2e2; color: #991b1b; }
+    .cover-letter {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .table-container {
+      overflow-x: auto;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    th {
+      background-color: #0d9488;
+      color: white;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover {
+      background-color: #f9fafb;
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+      .table-container {
+        border: 1px solid #e5e7eb;
+      }
+
+      table thead {
+        display: none;
+      }
+
+      tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+      }
+
+      td {
+        display: block;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f3f4f6;
+        text-align: left;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+        color: #374151;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="bg-blue-50 min-h-screen">
 
+<!-- Navigation -->
 <div th:replace="Navheader :: Navbar"></div>
 
-<div class="container my-5">
-  <h2 class="mb-4 text-center text-primary fw-bold">My Job Applications</h2>
+<div class="container mx-auto px-4 py-8">
+  <h2 class="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-6">My Job Applications</h2>
 
-  <div class="card shadow">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle text-center">
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="p-6">
+      <div class="table-container">
+        <table>
           <thead>
           <tr>
-            <th scope="col"><i class="bi bi-briefcase me-2"></i>Job Title</th>
-            <th scope="col"><i class="bi bi-building"></i> Company</th>
-            <th scope="col"><i class="bi bi-flag me-2"></i>Status</th>
-            <th scope="col"><i class="bi bi-file-earmark-text me-2"></i>Cover Letter</th>
-            <th scope="col"><i class="bi bi-file-earmark-person me-2"></i>Resume</th>
+            <th data-label="Job Title"><i class="fas fa-briefcase mr-2"></i>Job Title</th>
+            <th data-label="Company"><i class="fas fa-building mr-2"></i>Company</th>
+            <th data-label="Status"><i class="fas fa-flag mr-2"></i>Status</th>
+            <th data-label="Cover Letter"><i class="fas fa-file-alt mr-2"></i>Cover Letter</th>
+            <th data-label="Resume"><i class="fas fa-file-user mr-2"></i>Resume</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="app : ${applications}">
-            <td th:text="${app.job.title}" class="fw-semibold text-start ps-4"></td>
-            <td th:text="${app.job.company}" class="fw-semibold text-start ps-4"></td>
-            <td>
-              <span th:switch="${app.status}">
-                <span th:case="'APPLIED'" class="badge status-badge status-applied">
-                  <i class="bi bi-hourglass me-1"></i>Applied
+            <td data-label="Job Title" class="font-semibold text-gray-800" th:text="${app.job.title}"></td>
+            <td data-label="Company" class="font-semibold text-gray-800" th:text="${app.job.company}"></td>
+            <td data-label="Status">
+                <span th:switch="${app.status}">
+                  <span th:case="'APPLIED'" class="status-badge status-applied">
+                    <i class="fas fa-hourglass-half mr-1"></i>Applied
+                  </span>
+                  <span th:case="'UNDER_REVIEW'" class="status-badge status-review">
+                    <i class="fas fa-check-double mr-1"></i>Under Review
+                  </span>
+                  <span th:case="'SHORTLISTED'" class="status-badge status-shortlisted">
+                    <i class="fas fa-star mr-1"></i>Shortlisted
+                  </span>
+                  <span th:case="'REJECTED'" class="status-badge status-rejected">
+                    <i class="fas fa-times-circle mr-1"></i>Rejected
+                  </span>
+                  <span th:case="*" th:text="${app.status}"></span>
                 </span>
-                <span th:case="'UNDER_REVIEW'" class="badge status-badge status-review">
-                  <i class="bi bi-check2-all me-1"></i>Under Review
-                </span>
-                <span th:case="'SHORTLISTED'" class="badge status-badge status-shortlisted">
-                  <i class="bi bi-star me-1"></i>Shortlisted
-                </span>
-                <span th:case="'REJECTED'" class="badge status-badge status-rejected">
-                  <i class="bi bi-x-circle me-1"></i>Rejected
-                </span>
-                <span th:case="*" th:text="${app.status}"></span>
-              </span>
             </td>
-            <td>
-              <span class="cover-letter" th:text="${app.coverLetter}"
-                    th:title="${app.coverLetter}"></span>
+            <td data-label="Cover Letter">
+                <span class="cover-letter" th:text="${app.coverLetter}"
+                      th:title="${app.coverLetter}"
+                      onclick="showFullText(this)"></span>
             </td>
-            <td>
+            <td data-label="Resume">
               <a th:if="${app.resumePath != null}"
-                 th:href="@{'/applications/resume/' + ${app.id}}"
-                 class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-download me-1"></i>Download
+                 th:href="@{'/applications/download-resume/' + ${app.id}}"
+                 class="inline-flex items-center bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded text-sm font-medium transition-colors duration-200">
+                <i class="fas fa-download mr-1"></i>Download
               </a>
-              <span th:if="${app.resumePath == null}" class="text-muted">No Resume</span>
+              <span th:if="${app.resumePath == null}" class="text-gray-500">No Resume</span>
+            </td>
+          </tr>
+
+          <!-- Empty state -->
+          <tr th:if="${#lists.isEmpty(applications)}">
+            <td colspan="5" class="text-center py-8 text-gray-500">
+              <i class="fas fa-file-alt text-4xl mb-4 text-gray-300"></i>
+              <p class="text-lg">You haven't applied to any jobs yet.</p>
+              <a href="/jobs/list" class="text-blue-600 hover:text-blue-800 font-medium mt-2 inline-block">
+                Browse available jobs
+              </a>
             </td>
           </tr>
           </tbody>
@@ -82,14 +173,25 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-    tooltipTriggerList.map(function (el) {
-      return new bootstrap.Tooltip(el);
+  function showFullText(element) {
+    const fullText = element.getAttribute('title');
+    if (fullText && fullText.length > 50) {
+      alert('Cover Letter: ' + fullText);
+    }
+  }
+
+  // Initialize tooltips
+  document.addEventListener('DOMContentLoaded', function() {
+    const coverLetters = document.querySelectorAll('.cover-letter');
+    coverLetters.forEach(el => {
+      const fullText = el.getAttribute('title');
+      if (fullText && fullText.length > 50) {
+        el.setAttribute('title', 'Click to view full cover letter: ' + fullText);
+      }
     });
   });
 </script>
+
 </body>
 </html>

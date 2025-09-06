@@ -8,12 +8,15 @@ import com.jobpotal.job.entity.User;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ApplicationServiceImpl {
-    Application applyJob(ApplicationDto applicationDto, User user, MultipartFile  multipartFile);
+    Application applyJob(ApplicationDto applicationDto, User user, MultipartFile  multipartFile) throws Exception
+            ;
     List<Application> getApplicationByUser(User user);
     List<Application> getApplicationByJob(Job job);
-    void updateStatus(Long applicationId, ApplicationStatus status);
+    void updateStatus(Long applicationId, ApplicationStatus status)throws Exception;
     public Resource downloadResume(Long applicationId);
+
 }
