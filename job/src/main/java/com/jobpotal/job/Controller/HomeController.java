@@ -40,7 +40,7 @@ public class HomeController {
         String email = authentication.getName();
         String username = email.substring(0, email.indexOf("@"));
 
-        model.addAttribute("userEmail", email);
+        model.addAttribute("userEmail", username);
 
 
         boolean isEmployer = authentication.getAuthorities().stream()

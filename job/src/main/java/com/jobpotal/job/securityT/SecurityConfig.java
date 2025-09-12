@@ -13,13 +13,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
 
 
     @Bean
@@ -51,13 +52,16 @@ public class SecurityConfig {
                         .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
+                //login
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
+                        //oauth
                 )
+
                 .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
@@ -69,6 +73,9 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+
 
 
 

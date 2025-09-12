@@ -22,8 +22,9 @@ public class User {
     @NotBlank(message = "please enter email!")
     @Column(unique = true)
     private String email;
-    @NotBlank
+    @Column(nullable = true)
     private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

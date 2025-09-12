@@ -285,9 +285,13 @@
         <div class="relative ml-4" th:if="${#authorization.expression('isAuthenticated()')}">
           <button class="flex items-center space-x-2 focus:outline-none" id="user-menu-button">
             <div class="user-avatar">
-              <span th:text="${#authentication.principal.username.substring(0, 1).toUpperCase()}">U</span>
+<!--              <span th:text="${#authentication.principal.username.substring(0, 1).toUpperCase()}">U</span>-->
+              <span th:text="${initial}">U</span>
+
             </div>
-            <span class="text-white font-medium" th:text="${#authentication.principal.username}">User</span>
+<!--            <span class="text-white font-medium" th:text="${#authentication.principal.username}">User</span>-->
+            <span th:text="${initial}">U</span>
+
             <i class="fas fa-chevron-down text-xs text-white"></i>
           </button>
 
@@ -315,6 +319,7 @@
       <div class="md:w-2/3">
         <h1 class="text-3xl md:text-4xl font-bold mb-2">Welcome back 👋</h1>
         <h4 class="text-xl font-semibold text-blue-100 mb-4" th:text="${userEmail}">user@example.com</h4>
+<!--        <h1 class="text-4xl font-bold mb-4">Welcome back, <span th:text="${#authentication.name}">User</span>!</h1>-->
         <p class="text-lg text-blue-100 opacity-90">Access all the tools you need for your job search in one place.</p>
       </div>
       <div class="mt-6 md:mt-0">
